@@ -11,7 +11,8 @@ export class MapContainer extends Component {
     this.state = {
       showingInfoWindow: false,
       activeMarker: {},
-      selectedPlace: ''
+      selectedPlace: '',
+      currentCoordinates: {}
     }
   }
 
@@ -19,7 +20,8 @@ export class MapContainer extends Component {
     this.setState({
       activeMarker: e.latLng,
       selectedPlace: 'This is a place!',
-      showingInfoWindow: false
+      currentCoordinates: { x: e.latLng.lat(), y: e.latLng.lng() },
+      showingInfoWindow: true
     });
   }
 
@@ -34,11 +36,10 @@ export class MapContainer extends Component {
       <div>
         <Map google={ this.props.google } zoom={ 10 } onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
 
-          <Marker position={ this.state.activeMarker } onClick={ (props, marker, e) => this.onMarkerClicked(props, marker, e) } />
-
+          <Marker position={ {} } onClick={ (props, marker, e) => this.onMarkerClicked(props, marker, e) } />
           <InfoWindow position={ this.state.activeMarker } visible={ this.state.showingInfoWindow }>
             <div>
-              <h1>{ this.state.selectedPlace }</h1>
+              <h1>{ `${this.state.currentCoordinates.x}, ${this.state.currentCoordinates.y}` }</h1>
             </div>
           </InfoWindow>
 
