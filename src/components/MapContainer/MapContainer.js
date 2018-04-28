@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import PropTypes from 'prop-types';
-
-import './MapContainer.css';
 import InfoCard from './InfoCard/InfoCard';
+import './MapContainer.css';
 
 export class MapContainer extends Component {
 
@@ -33,7 +32,7 @@ export class MapContainer extends Component {
         const top = data.data;
         let crop, value;
         if (top.length === 0) {
-          crop = 'No Production';
+          crop = 'noProduction';
           value = 0;
         } else {
           crop = top[0][0],

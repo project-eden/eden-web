@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import strings from 'constants/strings.json';
 import './InfoCard.css';
 
 class InfoCard extends Component {
@@ -8,7 +9,7 @@ class InfoCard extends Component {
     return (
       <div className="InfoCard">
         <div></div>
-        <h1>{ `${this.props.crop}: ${this.props.value}` }</h1>
+        <h1>{ `${strings[this.props.crop]}: ${this.props.value}` }</h1>
       </div>
     );
   }
