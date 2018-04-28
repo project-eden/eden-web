@@ -17,6 +17,7 @@ export class MapContainer extends Component {
   }
 
   onMapClicked(props, map, e) {
+    console.log(map.setMapTypeId('satellite'));
     this.setState({
       activeMarker: e.latLng,
       selectedPlace: 'This is a place!',
@@ -35,7 +36,7 @@ export class MapContainer extends Component {
     return (
       <div>
         <Map google={ this.props.google } zoom={ 10 } onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
-
+        { console.log(this.props.google.setMapTypeId) }
           <Marker position={ {} } onClick={ (props, marker, e) => this.onMarkerClicked(props, marker, e) } />
           <InfoWindow position={ this.state.activeMarker } visible={ this.state.showingInfoWindow }>
             <div>
