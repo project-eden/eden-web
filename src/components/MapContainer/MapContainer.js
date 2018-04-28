@@ -16,13 +16,28 @@ export class MapContainer extends Component {
     }
   }
 
+  initMap(props, map) {
+    map.setMapTypeId('satellite');
+    map.setTilt(45);
+    map.set('streetViewControl', false);
+  }
+
   onMapClicked(props, map, e) {
-    console.log(map.setMapTypeId('satellite'));
-    this.setState({
-      activeMarker: e.latLng,
-      selectedPlace: 'This is a place!',
-      currentCoordinates: { x: e.latLng.lat(), y: e.latLng.lng() },
-      showingInfoWindow: true
+    const currentCoordinates = { x: e.latLng.lat(), y: e.latLng.lng() };
+
+    fetch(`http://localhost:8080/top_crops?x=${currentCoordinates.x}&y=${currentCoordinates.y}&n=1`).then(response => {
+      response.json().then(data => {
+        const top = data.data,
+          crop = top[0][0],
+          value = top[0][1]
+        this.setState({
+          activeMarker: e.latLng,
+          selectedPlace: data.data[0][0],
+          currentCoordinates: currentCoordinates,
+          showingInfoWindow: true,
+          'crop': crop
+        });
+      })
     });
   }
 
@@ -35,12 +50,15 @@ export class MapContainer extends Component {
   render() {
     return (
       <div>
-        <Map google={ this.props.google } zoom={ 10 } onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
-        { console.log(this.props.google.setMapTypeId) }
+        <Map google={ this.props.google } zoom={ 10 }
+            onReady={ (props, map) => this.initMap(props, map) }
+            onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
+
           <Marker position={ {} } onClick={ (props, marker, e) => this.onMarkerClicked(props, marker, e) } />
+
           <InfoWindow position={ this.state.activeMarker } visible={ this.state.showingInfoWindow }>
             <div>
-              <h1>{ `${this.state.currentCoordinates.x}, ${this.state.currentCoordinates.y}` }</h1>
+              <h1>{ `${this.state.crop}` }</h1>
             </div>
           </InfoWindow>
 
