@@ -1,6 +1,7 @@
 # Utility functions for processing and querying data.
 import numpy as np
 import pandas as pd
+import math
 
 # Returns the closes point that exists in the given table to the given coordinates.
 
@@ -15,19 +16,21 @@ def find_value_for_point(x, y, df):
 # - Seond item is a float value representing the production of the above crop at given point.
 
 def top_n_crops_produced_at_point(x, y, n, df):
-    # Get the cell corresponding to the point. In the Data, x and y are flipped so flip'em
+    # Don't report the latitute, longitude or bioClim variables as crops.
+    columns_to_ignore = ['x', 'y', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19']
+    # Get the cell corresponding to the point. In the Data, x and y are flipped so flip them
     cell = find_value_for_point(y, x, df)
     if (cell.empty):
         return None
-    # Ignore values for column, row, x, y for the query.
-    cell = cell[cell.columns.difference(['x', 'y'])]
+    # Ignore values given columns
+    cell = cell[cell.columns.difference(columns_to_ignore)]
     best_crops = cell.sort_values(by=cell.index[0], ascending=False, axis=1).iloc[:,0:n]
     top_n = []
     for column in best_crops:
         crop = best_crops[column]
         crop_name = crop.name
         value = round(crop.values[0], 3)
-        if (value != 0):
+        if (value != 0 and (not math.isnan(value))):
             top_n.append((crop_name, value))
     return top_n
 

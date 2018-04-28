@@ -9,10 +9,11 @@ export class MapContainer extends Component {
   constructor() {
     super();
     this.state = {
-      showingInfoWindow: false,
       activeMarker: {},
-      selectedPlace: '',
-      currentCoordinates: {}
+      currentCoordinates: {},
+      showingInfoWindow: false,
+      crop: '',
+      value: ''
     }
   }
 
@@ -27,15 +28,21 @@ export class MapContainer extends Component {
 
     fetch(`http://localhost:8080/top_crops?x=${currentCoordinates.x}&y=${currentCoordinates.y}&n=1`).then(response => {
       response.json().then(data => {
-        const top = data.data,
+        const top = data.data;
+        let crop, value;
+        if (top.length === 0) {
+          crop = 'No Production';
+          value = 0;
+        } else {
           crop = top[0][0],
-          value = top[0][1]
+          value = top[0][1];
+        }
         this.setState({
           activeMarker: e.latLng,
-          selectedPlace: data.data[0][0],
           currentCoordinates: currentCoordinates,
           showingInfoWindow: true,
-          'crop': crop
+          crop: crop,
+          value: value
         });
       })
     });
@@ -54,11 +61,11 @@ export class MapContainer extends Component {
             onReady={ (props, map) => this.initMap(props, map) }
             onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
 
-          <Marker position={ {} } onClick={ (props, marker, e) => this.onMarkerClicked(props, marker, e) } />
+          {/* <Marker position={ {} } onClick={ (props, marker, e) => this.onMarkerClicked(props, marker, e) } /> */}
 
           <InfoWindow position={ this.state.activeMarker } visible={ this.state.showingInfoWindow }>
             <div>
-              <h1>{ `${this.state.crop}` }</h1>
+              <h1>{ `${this.state.crop}: ${this.state.value}` }</h1>
             </div>
           </InfoWindow>
 
