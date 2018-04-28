@@ -1,5 +1,8 @@
 {
-  "noProduction" : "No Production",
+  "noProd" : "No Production",
+  "potentialProd" : "Potential Production",
+  "actualProd" : "Actual Production",
+  "unknown" : "Unknown",
   "whea" : "Wheat",
   "rice" : "Rice",
   "maiz" : "Maize",

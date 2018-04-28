@@ -32,7 +32,7 @@ export class MapContainer extends Component {
         const top = data.data;
         let crop, value;
         if (top.length === 0) {
-          crop = 'noProduction';
+          crop = 'noProd';
           value = 0;
         } else {
           crop = top[0][0],

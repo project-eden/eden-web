@@ -8,8 +8,14 @@ class InfoCard extends Component {
   render() {
     return (
       <div className="InfoCard">
-        <div></div>
-        <h1>{ `${strings[this.props.crop]}: ${this.props.value}` }</h1>
+        <div className="Potential">
+          <h5 className="InfoHeader">{ strings.potentialProd }</h5>
+          <h3>{ strings.unknown }</h3>
+        </div>
+        <div className="Actual">
+          <h5 className="InfoHeader">{ strings.actualProd }</h5>
+          <h3>{ `${strings[this.props.crop]}: ${this.props.value}` }</h3>
+        </div>
       </div>
     );
   }
