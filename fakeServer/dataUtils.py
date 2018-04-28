@@ -21,7 +21,7 @@ def top_n_crops_produced_at_point(x, y, n, df):
     # Get the cell corresponding to the point. In the Data, x and y are flipped so flip them
     cell = find_value_for_point(y, x, df)
     if (cell.empty):
-        return None
+        return []
     # Ignore values given columns
     cell = cell[cell.columns.difference(columns_to_ignore)]
     best_crops = cell.sort_values(by=cell.index[0], ascending=False, axis=1).iloc[:,0:n]
