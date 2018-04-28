@@ -4,13 +4,6 @@ import './App.css';
 
 class App extends Component {
 
-  constructor() {
-    super();
-    // this.scriptCache = cache({
-    //   google: 'https://api.google.com/some/script.js'
-    // });
-  }
-
   render() {
     return (
       <div className="App">
