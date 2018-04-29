@@ -21,7 +21,10 @@ yarn-debug.log*
 yarn-error.log*
 
 # temporary files to be replaced by server
-/fakeServer/production_clim_merged_georasters.csv
+/model/production_clim_merged_georasters.csv
 
 # compiled css files
 *.css
+
+# ignoring Ipynb Checkpoints
+.ipynb_checkpoints
