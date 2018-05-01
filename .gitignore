@@ -21,7 +21,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # temporary files to be replaced by server
-/fakeServer/production_clim_merged_georasters.csv
+/server/spam_production_georasters.csv
 
 # compiled css files
 *.css

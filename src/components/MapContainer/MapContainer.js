@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import {Map, InfoWindow, Marker, GoogleApiWrapper, HeatMap} from 'google-maps-react';
 import PropTypes from 'prop-types';
+import config from 'constants/config.json';
+import { getTopNCrops, whichCountry, allCoordinates } from 'utils/request';
 import InfoCard from './InfoCard/InfoCard';
+import SidePanel from './SidePanel/SidePanel';
 import './MapContainer.css';
 
 export class MapContainer extends Component {
@@ -12,8 +15,8 @@ export class MapContainer extends Component {
       activeMarker: {},
       currentCoordinates: {lat: 0, lng: 0},
       showingInfoWindow: false,
-      crop: '',
-      value: 0
+      cropData: [],
+      sidePanelOpen: false
     }
   }
 
@@ -22,50 +25,44 @@ export class MapContainer extends Component {
     map.setTilt(45);
     map.set('streetViewControl', false);
     map.set('minZoom', 2);
+    map.set('maxZoom', 13);
+    map.set('zoom', 3);
+    map.setCenter({lat:20, lng:-20});
   }
 
   onMapClicked(props, map, e) {
     const currentCoordinates = { lat: e.latLng.lat(), lng: e.latLng.lng() };
 
-    fetch(`http://localhost:8080/top_crops?x=${currentCoordinates.lat}&y=${currentCoordinates.lng}&n=1`).then(response => {
-      response.json().then(data => {
-        const top = data.data;
-        let crop, value;
-        if (top.length === 0) {
-          crop = 'noProd';
-          value = 0;
-        } else {
-          crop = top[0][0],
-          value = top[0][1];
-        }
-        this.setState({
-          currentCoordinates: currentCoordinates,
-          showingInfoWindow: true,
-          crop: crop,
-          value: value
-        });
-      })
+    getTopNCrops(currentCoordinates, 5).then(data => {
+      this.setState({
+        currentCoordinates: currentCoordinates,
+        showingInfoWindow: true,
+        cropData: data,
+        sidePanelOpen: true
+      });
     });
   }
 
   render() {
     return (
       <div>
-        <Map google={ this.props.google } zoom={ 10 }
-            onReady={ (props, map) => this.initMap(props, map) }
-            onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
+        <Map
+          google={ this.props.google }
+          onReady={ (props, map) => this.initMap(props, map) }
+          onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
 
-          <InfoWindow
-              position={ this.state.currentCoordinates }
-              visible={ this.state.showingInfoWindow }>
-
-            <InfoCard
-                crop={ this.state.crop }
-                value={ this.state.value }/>
-
-          </InfoWindow>
+          <Marker
+            position={ this.state.currentCoordinates }
+            onClick={ () => this.setState({sidePanelOpen: !this.state.sidePanelOpen}) }
+          />
 
         </Map>
+
+        <SidePanel
+          onClose={ () => this.setState({sidePanelOpen: false}) }
+          open={ this.state.sidePanelOpen }
+          cropData={ this.state.cropData }
+        />
       </div>
     );
   }
@@ -76,5 +73,6 @@ MapContainer.propTypes = {
 };
 
 export default GoogleApiWrapper({
-  apiKey: ('AIzaSyAcrDZFaBO6jGznTGYK-O6jSxs7FQDlzy0')
+  apiKey: (config.API_KEY),
+  libraries: ['places', 'visualization', 'geometry']
 })(MapContainer)

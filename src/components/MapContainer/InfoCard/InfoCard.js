@@ -5,16 +5,40 @@ import './InfoCard.css';
 
 class InfoCard extends Component {
 
+  constructor() {
+    super();
+    this.state = {
+      topCrop: {}
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.cropData.length > 0) {
+      const topCrop = nextProps.cropData[0],
+        name = topCrop[0],
+        value = topCrop[1];
+
+      return {
+        topCrop: {name, value}
+      };
+    }
+    return null;
+  }
+
+  logIt() {
+    console.log('a');
+  }
+
   render() {
     return (
-      <div className="InfoCard">
-        <div className="Potential">
-          <h5 className="InfoHeader">{ strings.potentialProd }</h5>
-          <h3>{ strings.unknown }</h3>
+      <div className='InfoCard'>
+        <div className='Actual'>
+          <h5 className='InfoHeader'>{ strings.actualProd }</h5>
+          <h3>{ `${strings[this.state.topCrop.name] || strings.unknown}: ${this.state.topCrop.value || ''}` }</h3>
         </div>
-        <div className="Actual">
-          <h5 className="InfoHeader">{ strings.actualProd }</h5>
-          <h3>{ `${strings[this.props.crop]}: ${this.props.value}` }</h3>
+        <div className='Potential'>
+          <h5 className='InfoHeader'>{ strings.potentialProd }</h5>
+          <h3>{ strings.unknown }</h3>
         </div>
       </div>
     );
@@ -22,8 +46,7 @@ class InfoCard extends Component {
 }
 
 InfoCard.propTypes = {
-  crop: PropTypes.string, // Name of crop to display.
-  value: PropTypes.number // Value to display.
+  cropData: PropTypes.array // Array of data to display.
 };
 
 export default InfoCard;

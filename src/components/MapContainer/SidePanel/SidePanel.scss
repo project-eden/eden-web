@@ -1,0 +1,26 @@
+.SidePanel {
+  position: fixed;
+  right: 0px;
+  top: 70px;
+  height: 100%;
+  width: 0;
+  background-color: #222;
+  -webkit-transition: width 0.2s; /* Safari */
+  transition: width 0.2s;
+  opacity: 0.9;
+  color: white;
+  text-align: left;
+  line-height: 3.5;
+}
+
+.TopCrops {
+  padding: 25px;
+}
+
+.CloseButton {
+  position: absolute;
+  top: 15px;
+  cursor: pointer;
+  content: '';
+  height: 25px;
+}
