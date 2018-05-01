@@ -50,3 +50,13 @@ def top_n_production_points_for_crop(crop_name, n, df):
         bundle = ((y, x), value)
         top_n.append(bundle)
     return top_n
+
+# Returns a list of all coordinate pairs in the given table.
+
+def coordinates(df):
+    xs = df['x'].tolist()
+    ys = df['y'].tolist()
+    coordinate_pairs = []
+    for x, y in zip(xs, ys):
+        coordinate_pairs.append([x, y])
+    return coordinate_pairs
