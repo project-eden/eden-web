@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "firebase": "^4.13.1",
-    "fs": "0.0.1-security",
     "google-maps-react": "^2.0.0",
     "node-sass-chokidar": "^1.2.2",
     "npm-run-all": "^4.1.2",
