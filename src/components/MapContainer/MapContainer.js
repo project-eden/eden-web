@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, HeatMap} from 'google-maps-react';
 import PropTypes from 'prop-types';
 import config from 'constants/config.json';
-import { pixel_resolutions } from 'constants/geoMappings.json';
+import { pixel_resolutions, heatmap_gradient } from 'constants/geoMappings.json';
 import { getTopNCrops, whichCountry, allCoordinates } from 'utils/request';
 import InfoCard from './InfoCard/InfoCard';
 import SidePanel from './SidePanel/SidePanel';
@@ -15,7 +15,7 @@ export class MapContainer extends Component {
     this.state = {
       activeMarker: {},
       currentCoordinates: {lat: 0, lng: 0},
-      showingInfoWindow: false,
+      showingMarker: false,
       cropData: [],
       sidePanelOpen: false
     }
@@ -52,7 +52,7 @@ export class MapContainer extends Component {
 
       var heatmap = new this.props.google.maps.visualization.HeatmapLayer({
         data: heatmapdata,
-        gradient: gradient,
+        gradient: heatmap_gradient,
         opacity: 0.7
       });
 
@@ -79,7 +79,7 @@ export class MapContainer extends Component {
     getTopNCrops(currentCoordinates, 5).then(data => {
       this.setState({
         currentCoordinates: currentCoordinates,
-        showingInfoWindow: true,
+        showingMarker: true,
         cropData: data,
         sidePanelOpen: true
       });
@@ -95,9 +95,9 @@ export class MapContainer extends Component {
           onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
 
           <Marker
+            visible={ this.state.showingMarker }
             position={ this.state.currentCoordinates }
-            // onClick={ () => this.setState({sidePanelOpen: !this.state.sidePanelOpen}) }
-            onClick={ () => this.state.heatmap.set({radius: 10}) }
+            onClick={ () => this.setState({sidePanelOpen: !this.state.sidePanelOpen}) }
           />
 
         </Map>
