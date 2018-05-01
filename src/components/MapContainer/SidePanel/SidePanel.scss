@@ -10,11 +10,29 @@
   opacity: 0.9;
   color: white;
   text-align: left;
-  line-height: 3.5;
 }
 
 .TopCrops {
-  padding: 25px;
+  padding: 0 35px;
+  line-height: 2.8;
+}
+
+.PredictedList {
+  position: fixed;
+  top: 120px;
+  width: 100%;
+}
+
+.ActualList {
+  position: fixed;
+  top: 460px;
+  width: 100%;
+}
+
+.Unknown {
+  font-size: 1.5em;
+  position: relative;
+  top: 50px;
 }
 
 .CloseButton {
@@ -23,4 +41,26 @@
   cursor: pointer;
   content: '';
   height: 25px;
+}
+
+.Greater {
+  color: #3DA35D;
+  background-image: url('../../../img/upArrow.svg');
+  background-repeat: no-repeat;
+  background-size: 50px;
+  background-position-x: 175px;
+  background-position-y: 15px;
+}
+
+.Lesser {
+  color: #D62246;
+  background-image: url('../../../img/downArrow.svg');
+  background-repeat: no-repeat;
+  background-size: 50px;
+  background-position-x: 175px;
+  background-position-y: 15px;
+}
+
+h1 {
+  margin: 0;
 }

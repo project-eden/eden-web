@@ -4,6 +4,8 @@
   "potentialProd" : "Potential Production",
   "actualProd" : "Actual Production",
   "unknown" : "Unknown",
+  "potential" : "Potential",
+  "actual" : "Current",
   "whea" : "Wheat",
   "rice" : "Rice",
   "maiz" : "Maize",

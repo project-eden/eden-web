@@ -1,15 +1,28 @@
 from bottle import Bottle, request, hook, route, response, run
 import pandas as pd
-from dataUtils import top_n_crops_produced_at_point, top_n_production_points_for_crop, coordinates
+from dataUtils import top_n_crops_produced_at_point, top_n_production_points_for_crop, coordinates, create_interesting_table
 
-df = None
+actual = None
+predicted = None
+interesting = None
 
 app = Bottle()
 
 # Load the panda table
 def _initialize():
-    global df
-    df = pd.read_csv('./spam_production_georasters.csv')
+    global actual
+    global predicted
+    global interesting
+    actual = pd.read_csv('./spam_production_georasters.csv')
+
+    # Generate fake prediction table for UI testing. TODO: Remove
+    predicted = actual.sample(frac=1).reset_index(drop=True)
+    predicted['x'] = actual['x']
+    predicted['y'] = actual['y']
+
+    # Create the interesting table.
+    interesting = create_interesting_table(actual.copy(deep=True), predicted.copy(deep=True))
+
     return
 
 @app.hook('after_request')
@@ -24,7 +37,7 @@ def index():
     crop = request.query['crop']
     n = int(request.query['n'])
 
-    top_points = top_n_production_points_for_crop(crop, n, df)
+    top_points = top_n_production_points_for_crop(crop, n, actual)
     return {'data': top_points}
 
 @app.route('/top_crops', method=['GET'])
@@ -33,12 +46,20 @@ def index():
     y = float(request.query['y'])
     n = int(request.query['n'])
 
-    top_crops = top_n_crops_produced_at_point(x, y, n, df)
-    return {'data': top_crops}
+    top_crops_actual = top_n_crops_produced_at_point(x, y, n, actual)
+    top_crops_predicted = top_n_crops_produced_at_point(x, y, n, predicted)
 
-@app.route('/coordinates', method=['GET'])
+    return {'data': {'actual': top_crops_actual, 'predicted': top_crops_predicted}};
+
+@app.route('/coordinates/all', method=['GET'])
 def index():
-    return {'data': coordinates(df)}
+    return {'data': coordinates(actual)}
+
+@app.route('/coordinates/interesting', method=['GET'])
+def index():
+    n = int(request.query['n'])
+
+    return {'data': coordinates(interesting[:n])}
 
 if __name__ == "__main__":
     _initialize()
