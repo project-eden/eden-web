@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, HeatMap} from 'google-maps-react';
 import PropTypes from 'prop-types';
 import config from 'constants/config.json';
+import { pixel_resolutions, heatmap_gradient } from 'constants/geoMappings.json';
 import { getTopNCrops, whichCountry, allCoordinates } from 'utils/request';
 import InfoCard from './InfoCard/InfoCard';
 import SidePanel from './SidePanel/SidePanel';
@@ -14,7 +15,7 @@ export class MapContainer extends Component {
     this.state = {
       activeMarker: {},
       currentCoordinates: {lat: 0, lng: 0},
-      showingInfoWindow: false,
+      showingMarker: false,
       cropData: [],
       sidePanelOpen: false
     }
@@ -24,10 +25,52 @@ export class MapContainer extends Component {
     map.setMapTypeId('satellite');
     map.setTilt(45);
     map.set('streetViewControl', false);
-    map.set('minZoom', 2);
-    map.set('maxZoom', 13);
+    map.set('minZoom', 3);
+    map.set('maxZoom', 12);
     map.set('zoom', 3);
     map.setCenter({lat:20, lng:-20});
+
+    this.createHeatMap(map);
+  }
+
+  getRadius(zoomLevel) {
+    // 10km * the pixel resolution for the given zoom level.
+    return 10000 / pixel_resolutions[String(zoomLevel)];
+  }
+
+  createHeatMap(map) {
+    allCoordinates().then(data => {
+      let heatmapdata = [];
+
+      // TODO Remove this map randomizer.
+      data.sort( function() { return 0.5 - Math.random() } );
+      var startingPoint = Math.floor(Math.random()*(data.length-0+1)+0);
+
+      data.slice(startingPoint, startingPoint+2000).forEach(location => {
+        heatmapdata.push(new this.props.google.maps.LatLng(location[1], location[0]));
+      });
+
+      var heatmap = new this.props.google.maps.visualization.HeatmapLayer({
+        data: heatmapdata,
+        gradient: heatmap_gradient,
+        opacity: 0.7
+      });
+
+      heatmap.setMap(map);
+      this.setState({
+        heatmap
+      });
+
+      // Dynamically set the radius of the heat map points to preserve resolution.
+      map.addListener('zoom_changed', () => {
+        const zoomLevel = map.getZoom();
+        if (zoomLevel >= 8) {
+          this.state.heatmap.setOptions({
+            radius: this.getRadius(zoomLevel)
+          });
+        }
+      });
+    });
   }
 
   onMapClicked(props, map, e) {
@@ -36,7 +79,7 @@ export class MapContainer extends Component {
     getTopNCrops(currentCoordinates, 5).then(data => {
       this.setState({
         currentCoordinates: currentCoordinates,
-        showingInfoWindow: true,
+        showingMarker: true,
         cropData: data,
         sidePanelOpen: true
       });
@@ -52,6 +95,7 @@ export class MapContainer extends Component {
           onClick={ (props, map, e) => this.onMapClicked(props, map, e) }>
 
           <Marker
+            visible={ this.state.showingMarker }
             position={ this.state.currentCoordinates }
             onClick={ () => this.setState({sidePanelOpen: !this.state.sidePanelOpen}) }
           />
