@@ -3,7 +3,7 @@ import {Map, InfoWindow, Marker, GoogleApiWrapper, HeatMap} from 'google-maps-re
 import PropTypes from 'prop-types';
 import config from 'constants/config.json';
 import { pixel_resolutions, heatmap_gradient } from 'constants/geoMappings.json';
-import { getTopNCrops, whichCountry, allCoordinates } from 'utils/request';
+import { getTopNCrops, whichCountry, allCoordinates, interestinCoordinates } from 'utils/request';
 import InfoCard from './InfoCard/InfoCard';
 import SidePanel from './SidePanel/SidePanel';
 import './MapContainer.css';
@@ -16,7 +16,7 @@ export class MapContainer extends Component {
       activeMarker: {},
       currentCoordinates: {lat: 0, lng: 0},
       showingMarker: false,
-      cropData: [],
+      cropData: {},
       sidePanelOpen: false
     }
   }
@@ -39,14 +39,10 @@ export class MapContainer extends Component {
   }
 
   createHeatMap(map) {
-    allCoordinates().then(data => {
+    interestinCoordinates(1000).then(data => {
       let heatmapdata = [];
 
-      // TODO Remove this map randomizer.
-      data.sort( function() { return 0.5 - Math.random() } );
-      var startingPoint = Math.floor(Math.random()*(data.length-0+1)+0);
-
-      data.slice(startingPoint, startingPoint+2000).forEach(location => {
+      data.forEach(location => {
         heatmapdata.push(new this.props.google.maps.LatLng(location[1], location[0]));
       });
 

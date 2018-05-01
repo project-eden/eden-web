@@ -24,15 +24,33 @@ export function getTopNCrops(coordinates, n) {
   }
 
 /*
-* Returns the country for the given coordinates.
+* Returns all coordinates in the map.
 *
-* @param {Object} coordinates
-* @return {String} Name of the country.
+* @return {String} List of coordinate pairs.
 */
 
 export function allCoordinates() {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:8080/coordinates`)
+    fetch(`http://localhost:8080/coordinates/all`)
+      .then(response => {
+        response.json().then(data => {
+          resolve(data.data);
+        });
+      })
+      .catch(error => reject(error));
+  });
+}
+
+/*
+* Returns all interesting coordinates in the map.
+*
+* @param {Number} n - the number of points to fetch.
+* @return {String} List of coordinate pairs.
+*/
+
+export function interestinCoordinates(n) {
+  return new Promise((resolve, reject) => {
+    fetch(`http://localhost:8080/coordinates/interesting?n=${n}`)
       .then(response => {
         response.json().then(data => {
           resolve(data.data);
