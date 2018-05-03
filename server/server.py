@@ -5,6 +5,8 @@ from dataUtils import top_n_crops_produced_at_point, top_n_production_points_for
 actual = None
 predicted = None
 interesting = None
+test = None
+test_interesting = None
 
 app = Bottle()
 
@@ -13,16 +15,20 @@ def _initialize():
     global actual
     global predicted
     global interesting
+
     actual = pd.read_csv('../data/actual_production.csv')
     predicted = pd.read_csv('../data/predicted_production.csv')
 
-    # # Generate fake prediction table for UI testing. TODO: Remove
-    # predicted = actual.sample(frac=1).reset_index(drop=True)
-    # predicted['x'] = actual['x']
-    # predicted['y'] = actual['y']
-
     # Create the interesting table.
     interesting = create_interesting_table(actual.copy(deep=True), predicted.copy(deep=True))
+
+    # Generate fake prediction table for UI testing. TODO: Remove
+    global test
+    global test_interesting
+    test = actual.sample(frac=1).reset_index(drop=True)
+    test['x'] = actual['x']
+    test['y'] = actual['y']
+    test_interesting = create_interesting_table(actual.copy(deep=True), test.copy(deep=True))
 
     return
 
@@ -65,8 +71,12 @@ def index():
 @app.route('/coordinates/interesting', method=['GET'])
 def index():
     n = int(request.query['n'])
+    testing = bool(request.query['testing'])
 
-    return {'data': coordinates(interesting[:n])}
+    if (testing):
+        return {'data': coordinates(test_interesting[:n])}
+    else:
+        return {'data': coordinates(interesting[:n])}
 
 if __name__ == "__main__":
     _initialize()

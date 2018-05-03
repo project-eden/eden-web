@@ -1,0 +1,96 @@
+.CropSelector {
+  width: 350px;
+  position: fixed;
+  right: 0px;
+  top: 70px;
+  background-color: #222;
+  -webkit-transition: height 0.2s; /* Safari */
+  transition: height 0.2s;
+  opacity: 0.9;
+  text-align: right;
+  z-index: 1;
+  overflow-y: scroll;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+.Button {
+  cursor: pointer;
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  display: flex;
+}
+
+.HeatMapIcon {
+  background-image: url('../../../img/heatmapIcon.svg');
+  background-repeat: no-repeat;
+  height: 55px;
+  width: 55px;
+  background-size: 45px;
+  margin-left: 10px;
+  position: relative;
+  top: 4px;
+}
+
+.CloseIcon {
+  background-image: url('https://png.icons8.com/ios/100/ffffff/delete-sign-filled.png');
+  background-repeat: no-repeat;
+  height: 55px;
+  width: 55px;
+  background-size: 35px;
+  margin-left: 10px;
+  position: relative;
+  top: 12px;
+  left: 6px;
+}
+
+::-webkit-scrollbar {
+  width: 4px;  /* remove scrollbar space */
+  background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+  background: #D62246;
+}
+
+.Prompt {
+  text-align: center;
+  display: flex
+}
+
+.DropdownTitle {
+  margin-bottom: 40px;
+}
+
+.SelectCrop {
+  width: 100%;
+}
+
+.Dropdown {
+  text-align: left;
+  padding-left: 40px;
+  line-height: 2.5;
+}
+
+.SelectDataset {
+  width: 100%;
+}
+
+.DatasetOptions {
+  text-align: right;
+  padding-right: 40px;
+  line-height: 4;
+}
+
+.SelectionOption {
+  cursor: pointer;
+}
+
+.Selected {
+  color: #3DA35D;
+}
