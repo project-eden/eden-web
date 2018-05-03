@@ -63,15 +63,15 @@ def coordinates(df):
 
 # Returns a list of N interesting coordinate pairs determined by comparing the two given tables.
 
-def create_interesting_table(actual, prediction):
+def create_interesting_table(actual, predicted):
     threshold = 0.5
     actual['total'] = actual[actual.columns.difference(['x', 'y'])].sum(axis=1)
-    prediction['total'] = prediction[prediction.columns.difference(['x', 'y'])].sum(axis=1)
+    predicted['total'] = predicted[predicted.columns.difference(['x', 'y'])].sum(axis=1)
 
     # Get how different the tables are in output as a percentage.
-    difference_column = actual['total']/prediction['total']
+    difference_column = actual['total']/predicted['total']
     # Get all coordinates where the difference is more than THRESHOLD percent.
-    interesting_table = actual.loc[actual['total']/prediction['total'] > threshold][['x', 'y']]
+    interesting_table = actual.loc[actual['total']/predicted['total'] > threshold][['x', 'y']]
 
     interesting_table['difference'] = difference_column
 

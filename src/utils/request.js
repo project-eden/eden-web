@@ -23,6 +23,27 @@ export function getTopNCrops(coordinates, n) {
     });
   }
 
+
+/*
+* Gets the top N points to produce given crop according to given dataset.
+*
+* @param {String} crop
+* @param {Number} n
+* @param {String} table - 'actual' or 'predicted'
+* @return {Array} List of Top N Points.
+*/
+
+export function getTopNPoints(crop, n, table) {
+  return new Promise((resolve, reject) => {
+    fetch(`http://localhost:8080/top_points?crop=${crop}&n=${n}&table=${table}`)
+      .then(response => {
+        response.json().then(data => {
+          resolve(data.data);
+        });
+      }).catch(error => reject(error));
+    });
+  }
+
 /*
 * Returns all coordinates in the map.
 *

@@ -13,12 +13,13 @@ def _initialize():
     global actual
     global predicted
     global interesting
-    actual = pd.read_csv('./spam_production_georasters.csv')
+    actual = pd.read_csv('../data/actual_production.csv')
+    predicted = pd.read_csv('../data/predicted_production.csv')
 
-    # Generate fake prediction table for UI testing. TODO: Remove
-    predicted = actual.sample(frac=1).reset_index(drop=True)
-    predicted['x'] = actual['x']
-    predicted['y'] = actual['y']
+    # # Generate fake prediction table for UI testing. TODO: Remove
+    # predicted = actual.sample(frac=1).reset_index(drop=True)
+    # predicted['x'] = actual['x']
+    # predicted['y'] = actual['y']
 
     # Create the interesting table.
     interesting = create_interesting_table(actual.copy(deep=True), predicted.copy(deep=True))
@@ -36,8 +37,14 @@ def enable_cors():
 def index():
     crop = request.query['crop']
     n = int(request.query['n'])
+    table = request.query['table']
 
-    top_points = top_n_production_points_for_crop(crop, n, actual)
+    if (table == 'predicted'):
+        table = predicted
+    else:
+        table = actual
+
+    top_points = top_n_production_points_for_crop(crop, n, table)
     return {'data': top_points}
 
 @app.route('/top_crops', method=['GET'])
