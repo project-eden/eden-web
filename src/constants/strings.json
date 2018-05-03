@@ -6,6 +6,7 @@
   "unknown" : "Unknown",
   "potential" : "Potential",
   "actual" : "Current",
+  "interesting" : "Interesting",
   "selectCrop" : "Select a Crop",
   "selectDataset" : "Select a Dataset",
   "visualize": "Visualize Data",

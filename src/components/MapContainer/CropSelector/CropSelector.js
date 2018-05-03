@@ -52,6 +52,12 @@ class CropSelector extends Component {
                 onClick={ () => this.props.onSelectDataset('predicted') }>
                 { strings.potential }
               </div>
+
+              <div
+                className={ `SelectionOption ${this.props.selectedDataset === 'interesting' ? 'Selected' : ''}` }
+                onClick={ () => this.props.onSelectDataset('interesting') }>
+                { strings.interesting  }
+              </div>
             </div>
           </div>
         </div>

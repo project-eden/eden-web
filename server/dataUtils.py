@@ -51,6 +51,19 @@ def top_n_production_points_for_crop(crop_name, n, df):
         top_n.append(bundle)
     return top_n
 
+# Returns a list of coordinate that were originially zero or NaN for the given crop but we predict more value.
+
+def interesting_points(crop_name, n, actual, predicted):
+    # Get coordinates from actual where value for given crop was zero or NaN.
+    was_originally_zero_or_nan = actual.loc[((actual[crop_name] == 0) | (str(actual[crop_name]) == str(np.nan)))]
+    # Interesting if actual was 0 or NaN but predicted is not.
+    is_interesting = was_originally_zero_or_nan.loc[(predicted[crop_name] > 0)][['x', 'y', crop_name]]
+
+    interesting_predictions = predicted[predicted.index.isin(is_interesting.index)][['x', 'y', crop_name]]
+
+    return interesting_predictions
+
+
 # Returns a list of all coordinate pairs in the given table.
 
 def coordinates(df):
@@ -60,22 +73,3 @@ def coordinates(df):
     for x, y in zip(xs, ys):
         coordinate_pairs.append([x, y])
     return coordinate_pairs
-
-# Returns a list of N interesting coordinate pairs determined by comparing the two given tables.
-
-def create_interesting_table(actual, predicted):
-    threshold = 0.5
-    actual['total'] = actual[actual.columns.difference(['x', 'y'])].sum(axis=1)
-    predicted['total'] = predicted[predicted.columns.difference(['x', 'y'])].sum(axis=1)
-
-    # Get how different the tables are in output as a percentage.
-    difference_column = actual['total']/predicted['total']
-    # Get all coordinates where the difference is more than THRESHOLD percent.
-    interesting_table = actual.loc[actual['total']/predicted['total'] > threshold][['x', 'y']]
-
-    interesting_table['difference'] = difference_column
-
-    # Remove values that are infinitely larger
-    interesting_table = interesting_table.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
-
-    return interesting_table.sort_values(by=['difference'])

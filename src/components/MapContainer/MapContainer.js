@@ -37,7 +37,7 @@ export class MapContainer extends Component {
         if (this.state.heatmap) {
            this.state.heatmap.setMap(null);
         }
-        getTopNPoints(crop, 10000, dataset).then(data => {
+        getTopNPoints(crop, 40000, dataset).then(data => {
           const coordinates = data.map(point => point[0]);
           this.createHeatMap(coordinates, this.state.map, null);
         });

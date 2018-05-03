@@ -1,12 +1,9 @@
 from bottle import Bottle, request, hook, route, response, run
 import pandas as pd
-from dataUtils import top_n_crops_produced_at_point, top_n_production_points_for_crop, coordinates, create_interesting_table
+from dataUtils import top_n_crops_produced_at_point, top_n_production_points_for_crop, coordinates, interesting_points
 
 actual = None
 predicted = None
-interesting = None
-test = None
-test_interesting = None
 
 app = Bottle()
 
@@ -14,21 +11,9 @@ app = Bottle()
 def _initialize():
     global actual
     global predicted
-    global interesting
 
     actual = pd.read_csv('../data/actual_production.csv')
     predicted = pd.read_csv('../data/predicted_production.csv')
-
-    # Create the interesting table.
-    interesting = create_interesting_table(actual.copy(deep=True), predicted.copy(deep=True))
-
-    # Generate fake prediction table for UI testing. TODO: Remove
-    global test
-    global test_interesting
-    test = actual.sample(frac=1).reset_index(drop=True)
-    test['x'] = actual['x']
-    test['y'] = actual['y']
-    test_interesting = create_interesting_table(actual.copy(deep=True), test.copy(deep=True))
 
     return
 
@@ -47,10 +32,13 @@ def index():
 
     if (table == 'predicted'):
         table = predicted
-    else:
+    elif (table == 'actual'):
         table = actual
+    elif (table == 'interesting'):
+        table = interesting_points(crop, n, actual, predicted)
 
     top_points = top_n_production_points_for_crop(crop, n, table)
+
     return {'data': top_points}
 
 @app.route('/top_crops', method=['GET'])
@@ -68,15 +56,6 @@ def index():
 def index():
     return {'data': coordinates(actual)}
 
-@app.route('/coordinates/interesting', method=['GET'])
-def index():
-    n = int(request.query['n'])
-    testing = bool(request.query['testing'])
-
-    if (testing):
-        return {'data': coordinates(test_interesting[:n])}
-    else:
-        return {'data': coordinates(interesting[:n])}
 
 if __name__ == "__main__":
     _initialize()
