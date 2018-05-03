@@ -6,6 +6,7 @@ import { pixel_resolutions, heatmap_gradient } from 'constants/geoMappings.json'
 import { getTopNCrops, getTopNPoints, whichCountry, allCoordinates, interestinCoordinates } from 'utils/request';
 import InfoCard from './InfoCard/InfoCard';
 import SidePanel from './SidePanel/SidePanel';
+import CropSelector from './CropSelector/CropSelector';
 import './MapContainer.css';
 
 export class MapContainer extends Component {
@@ -13,26 +14,46 @@ export class MapContainer extends Component {
   constructor() {
     super();
     this.state = {
+      map: {},
+      heatmap: undefined,
       activeMarker: {},
       currentCoordinates: {lat: 0, lng: 0},
       showingMarker: false,
       cropData: {},
-      sidePanelOpen: false
+      sidePanelOpen: false,
+      cropSelectorOpen: false,
+      selectedCrop: '',
+      selectedDataset: ''
     }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const crop = this.state.selectedCrop,
+      dataset = this.state.selectedDataset;
+
+      const shouldReFetch = ((crop && dataset) && ((crop !== prevState.selectedCrop) || (dataset !== prevState.selectedDataset)));
+
+      if (shouldReFetch) {
+        if (this.state.heatmap) {
+           this.state.heatmap.setMap(null);
+        }
+        getTopNPoints(crop, 10000, dataset).then(data => {
+          const coordinates = data.map(point => point[0]);
+          this.createHeatMap(coordinates, this.state.map, null);
+        });
+      }
   }
 
   initMap(props, map) {
     map.setMapTypeId('satellite');
     map.setTilt(45);
     map.set('streetViewControl', false);
-    map.set('minZoom', 3);
+    map.set('minZoom', 2);
     map.set('maxZoom', 12);
     map.set('zoom', 3);
     map.setCenter({lat:20, lng:-20});
 
-    interestinCoordinates(1000).then(data => {
-      this.createHeatMap(data, map);
-    });
+    this.setState({map});
   }
 
   getRadius(zoomLevel) {
@@ -40,23 +61,27 @@ export class MapContainer extends Component {
     return 10000 / pixel_resolutions[String(zoomLevel)];
   }
 
-  createHeatMap(data, map) {
+  /*
+  * Create a heatmap with the given data and gradient and save it as state with the given name.
+  */
+
+  createHeatMap(data, map, gradient) {
     let heatmapdata = [];
 
     data.forEach(location => {
-      heatmapdata.push(new this.props.google.maps.LatLng(location[1], location[0]));
+      heatmapdata.push(new this.props.google.maps.LatLng(location[0], location[1]));
     });
 
     var heatmap = new this.props.google.maps.visualization.HeatmapLayer({
       data: heatmapdata,
-      gradient: heatmap_gradient,
+      gradient: gradient,
       opacity: 0.7
     });
 
     heatmap.setMap(map);
-    this.setState({
-      heatmap
-    });
+
+    // Save heatmap.
+    this.setState({heatmap});
 
     // Dynamically set the radius of the heat map points to preserve resolution.
     map.addListener('zoom_changed', () => {
@@ -67,6 +92,7 @@ export class MapContainer extends Component {
         });
       }
     });
+
   }
 
   onMapClicked(props, map, e) {
@@ -77,14 +103,25 @@ export class MapContainer extends Component {
         currentCoordinates: currentCoordinates,
         showingMarker: true,
         cropData: data,
-        sidePanelOpen: true
+        sidePanelOpen: true,
+        cropSelectorOpen: false,
       });
     });
   }
 
   render() {
     return (
-      <div>
+      <div className="MapContainer">
+
+        <CropSelector
+          open={ this.state.cropSelectorOpen }
+          selectedCrop={ this.state.selectedCrop }
+          selectedDataset={ this.state.selectedDataset }
+          onSelectCrop={ crop => this.setState({selectedCrop: crop}) }
+          onSelectDataset={ dataset => this.setState({selectedDataset: dataset}) }
+          onClick={ () => this.setState({cropSelectorOpen: !this.state.cropSelectorOpen, sidePanelOpen: !this.state.cropSelectorOpen ? false : this.state.sidePanelOpen}) }
+        />
+
         <Map
           google={ this.props.google }
           onReady={ (props, map) => this.initMap(props, map) }
