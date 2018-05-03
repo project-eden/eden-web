@@ -69,9 +69,9 @@ export function allCoordinates() {
 * @return {String} List of coordinate pairs.
 */
 
-export function interestinCoordinates(n) {
+export function interestinCoordinates(n, testing) {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:8080/coordinates/interesting?n=${n}`)
+    fetch(`http://localhost:8080/coordinates/interesting?n=${n}&testing=${testing}`)
       .then(response => {
         response.json().then(data => {
           resolve(data.data);

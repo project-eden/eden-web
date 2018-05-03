@@ -14,13 +14,13 @@ class SidePanel extends Component {
           value = crop[1];
 
         return (
-          <div style={ !this.props.open ? { display: 'none' } : {color: 'white'} } key={ key }>
+          <div style={ !this.props.open ? { display: 'none' } : {color: '#ecf0f1'} } key={ key }>
             { `${cropName}: ${value}` }
           </div>);
       });
     } else {
       return (
-        <div className="Unknown" style={ !this.props.open ? { display: 'none' } : {color: 'white'} }>
+        <div className="Unknown" style={ !this.props.open ? { display: 'none' } : {color: '#ecf0f1'} }>
           { strings.unknown }
         </div>);
     }
@@ -58,6 +58,7 @@ class SidePanel extends Component {
           style={ !this.props.open ? { display: 'none' } : {} }
           src='https://png.icons8.com/ios/100/ffffff/delete-sign-filled.png'
         />
+
         <div className='TopCrops'>
           <div className="PredictedList">
             <h1 className={ this.getHeaderClass('predicted') }> { strings.potential } </h1>
