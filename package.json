@@ -21,5 +21,6 @@
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js"
-  }
+  },
+  "proxy": "http://localhost:8080"
 }
