@@ -15,7 +15,7 @@ class SidePanel extends Component {
 
         return (
           <div style={ !this.props.open ? { display: 'none' } : {color: '#ecf0f1'} } key={ key }>
-            { `${cropName}: ${value}` }
+            { `${cropName}` }
           </div>);
       });
     } else {
